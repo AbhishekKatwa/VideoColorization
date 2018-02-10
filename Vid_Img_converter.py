@@ -1,6 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Jan 25 13:53:19 2018
+
+@author: Abhijith S D
+"""
+
 import cv2
 import os
 import time
+from ffmpy import FFmpeg
 
 def video_to_frames(input_loc, output_loc):
     """Function to extract frames from input video file
@@ -61,7 +70,7 @@ def frames_to_video(inputpath,outputpath,fps):
        size =  (img.shape[1],img.shape[0])
        img = cv2.resize(img,size)
        image_array.append(img)
-    fourcc = cv2.VideoWriter_fourcc('D','I','V','X')
+    fourcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')
     out = cv2.VideoWriter(outputpath,fourcc, fps, size)
     for i in range(len(image_array)):
        out.write(image_array[i])
@@ -87,21 +96,44 @@ def color_to_gray(colorpath,graypath):
        gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
        cv2.imwrite(graypath+"/"+files[i],gray_image)
 
+def demultiplexing(ip_file):
+	ff = FFmpeg(
+		inputs={ip_file: None},
+		outputs={
+			'video_only.mp4': ['-map', '0:0', '-c:a', 'copy', '-f', 'mp4'],
+			'audio_only.mp4': ['-map', '0:1', '-c:a', 'copy', '-f', 'mp4']
+			}
+		)
+	ff.run()
+	ff1 = FFmpeg(
+ 		inputs={'audio_only.mp4': None},
+ 		outputs={'audio_only.mp3': ['-ab', '320k']}
+	)
+	ff1.run()
+def multiplexing():
+	ff = FFmpeg(
+		inputs={'video_bw.mp4': None, 'audio_only.mp3': None},
+		outputs={'output.ts': '-c:v h264 -c:a ac3'}
+		)
+	ff.run()
+
+demultiplexing('video.mp4')
 
 
-inputpath = "bw"
-outpath =  "video_bw.mp4"
-fps = 24
-frames_to_video(inputpath,outpath,fps)
-
-'''
-input_loc="video.mp4"
+input_loc="video_only.mp4"
 output_loc="out"
 video_to_frames(input_loc,output_loc)
-'''
 
-'''
-colorpath="./out"
-graypath="./bw"
+
+
+colorpath="/home/chiku/Study/College_Project/out"
+graypath="/home/chiku/Study/College_Project/bw"
 color_to_gray(colorpath,graypath)
-'''
+
+
+inputpath = "/home/chiku/Study/College_Project/bw"
+outpath =  "video_bw.mp4"
+fps = 30
+frames_to_video(inputpath,outpath,fps)
+
+multiplexing()
