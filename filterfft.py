@@ -1,8 +1,6 @@
 """
 2D image filter of numpy arrays, via FFT.
 
-Connelly Barnes, public domain 2007.
-
 >>> filter([[1,2],[3,4]], [[0,1,0],[1,1,1],[0,1,0]])    # Filter greyscale image
 array([[  8.,  11.],
        [ 14.,  17.]])
@@ -116,7 +114,7 @@ def gaussian(sigma=0.5, shape=None):
   ans = numpy.outer(Kx, Ky) / (2.0*numpy.pi*sigma**2)
   return ans/sum(sum(ans))
 
-
+'''
 def test():
   print('Testing:')
   def arrayeq(A, B):
@@ -154,6 +152,7 @@ def test():
   assert arrayeq(gaussian(100), gaussian(-100))
   print('  gaussian:   OK')
 
+'''
 
 if __name__ == '__main__':
   test()

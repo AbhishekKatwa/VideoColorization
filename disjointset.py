@@ -15,11 +15,11 @@ class DisjointSet:
     '''Disjoin set implementation with union by rank and path compression
     heuristics. Keeps a dictionary that maps input data to Nodes.'''
     def __init__(self, num):
-        self.data = {}
+        self.dataSet = {}
         self.num = num
 
     def makeSet(self, k, v):
-        self.data[k] = Node(k, v)
+        self.dataSet[k] = Node(k, v)
 
     def unionNode(self, x, y):
         rep1 = self.findNode(x)
@@ -50,5 +50,5 @@ class DisjointSet:
         return x.parent
 
     def find(self, x):
-        return self.findNode(self.data[x])
+        return self.findNode(self.dataSet[x])
 
